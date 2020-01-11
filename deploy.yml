@@ -1,0 +1,23 @@
+
+container_os: alpine
+
+environment:
+    KAFKA_BOOTSTRAP_SERVERS: 's3.ubuntu.home:9092,s4.ubuntu.home:9092'
+    KAFKA_ID: 4
+    LOCATION: home 
+
+skip_wait:
+    - blue
+    - grafana
+    - jbe
+    - jfk
+    - jira
+    - mysql
+    - pgadmin4
+    - supervisorm
+    - registry
+
+versions:
+    repo: https://github.com/ballab1/versions
+    dir: ${WORKSPACE_DIR}/.versions
+    commit: 589bd45dce67db2e0d62cca31e9ec12acb4093bf
