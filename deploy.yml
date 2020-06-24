@@ -3,8 +3,9 @@ container_os: alpine
 
 environment:
     KAFKA_BOOTSTRAP_SERVERS: 's3.ubuntu.home:9092,s4.ubuntu.home:9092'
-    KAFKA_ID: 4
     LOCATION: home 
+    PULSAR_VERSION: 2.4.2
+    ZOOKEEPER_ID: 4
 
 skip_wait:
     - blue
@@ -14,6 +15,7 @@ skip_wait:
     - jira
     - mysql
     - pgadmin4
+    - pulsar
     - supervisorm
     - registry
 

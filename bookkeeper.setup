@@ -2,12 +2,12 @@
 
 #############################################################################
 #
-#   initialization for pulsar zookeeper
+#   initialization for pulsar bookeeper
 #
 #############################################################################
 
-declare -r config_dir="${CONFIG_DIR:?}/zookeeper"
-declare -r workspace_dir="${WORKSPACE_DIR:?}/zookeeper"
+declare -r config_dir="${CONFIG_DIR:?}/bookeeper"
+declare -r workspace_dir="${WORKSPACE_DIR:?}/bookeeper"
 
 
 declare isIinitialized="$(basename "${BASH_SOURCE[0]}")"
@@ -15,11 +15,8 @@ isIinitialized="${workspace_dir}/.${isIinitialized%.*}.init"
 if [ ! -f "$isIinitialized" ]; then
 
     # perform initialization 
-    mkdir -p "${workspace_dir}/data/zookeeper" ||:
-
-    echo "$ZOOKEEPER_ID" > "${workspace_dir}/data/zookeeper/myid"
-
-
+    mkdir -p "$workspace_dir" ||: 
+  
     touch "$isIinitialized"
 fi
 

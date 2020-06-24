@@ -1,0 +1,25 @@
+
+status: error
+name: LogstashPropertiesConfig
+
+appender:
+    console:
+        type: Console
+        name: plain_console
+        layout:
+            type: PatternLayout
+            pattern: [%d{ISO8601}][%-5p][%-25c] %m%n
+
+    json_console:
+        type: Console
+        name: json_console
+        layout:
+            type: JSONLayout
+            compact: true
+            eventEol: true
+
+rootLogger:
+    level: ${sys:ls.log.level}
+    appenderRef:
+        console:
+            ref: ${sys:ls.log.format}_console

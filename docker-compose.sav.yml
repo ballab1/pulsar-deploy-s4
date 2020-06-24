@@ -1,0 +1,104 @@
+version: '3.5'
+
+services:
+    bookkeeper:
+        command: /pulsar/bin/bookkeeper bookie
+        container_name: bookkeeper
+        dns: 10.1.3.1
+        dns_search:
+            - ubuntu.home
+            - home
+        environment:
+            DEBUG_TRACE: ${DEBUG_TRACE:-0}
+            JMX_PORT: 1299
+            ZOOKEEPER_MY_ID: ${ZOOKEEPER_ID:?}
+            ZOOKEEPER_PORT: 2181
+            ZOOKEEPER_TICK_TIME: 2000
+            ZOOKEEPER_INIT_LIMIT: 10
+            ZOOKEEPER_SYNC_LIMIT: 5
+        hostname: bookkeeper.s4.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/pulsar-all:${PULSAR_VERSION:-2.4.2}
+        logging:
+            driver: json-file
+            options:
+                max-size: "10m"
+                max-file: "3"
+        networks:
+            - pulsar-net
+        ports:
+            - "1299:1299"
+            - "2181:2181"
+        restart: unless-stopped
+        volumes:
+            - ./bookkeeper/conf:/pulsar/conf
+            - ./bookkeeper/data:/pulsar/data
+            - ./bookkeeper/logs:/pulsar/logs 
+            - ./bookkeeper/log:/var/log
+
+    broker:
+        command: /pulsar/bin/pulsar standalone
+        container_name: broker
+        depends_on:
+            - bookkeeper
+            - zookeeper
+        dns: 10.1.3.1
+        dns_search:
+            - ubuntu.home
+            - home
+        hostname: broker.s4.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/pulsar-all:${PULSAR_VERSION:-2.4.2}
+        logging:
+            driver: json-file
+            options:
+                max-file: "3"
+                max-size: "10m"
+        links:
+           - zookeeper
+        networks:
+            - pulsar-net
+        ports:
+            - "6650:6650"
+            - "8080:8080"
+        restart: unless-stopped
+        volumes:
+            - ./broker/data:/pulsar/data
+            - ./broker/logs:/pulsar/logs
+            - ./broker/log:/var/log
+
+    zookeeper:
+        command: /pulsar/bin/pulsar-daemon start zookeeper
+        container_name: zookeeper
+        dns: 10.1.3.1
+        dns_search:
+            - ubuntu.home
+            - home
+        environment:
+            DEBUG_TRACE: ${DEBUG_TRACE:-0}
+            JMX_PORT: 1299
+            ZOOKEEPER_MY_ID: ${ZOOKEEPER_ID:?}
+            ZOOKEEPER_PORT: 2181
+            ZOOKEEPER_TICK_TIME: 2000
+            ZOOKEEPER_INIT_LIMIT: 10
+            ZOOKEEPER_SYNC_LIMIT: 5
+        hostname: zookeeper.s4.home
+        image: ${DOCKER_REGISTRY:-ubuntu-s2.home:5000/}thirdparty/pulsar-all:${PULSAR_VERSION:-2.4.2}
+        logging:
+            driver: json-file
+            options:
+                max-size: "10m"
+                max-file: "3"
+        networks:
+            - pulsar-net
+        ports:
+            - "1299:1299"
+            - "2181:2181"
+        restart: unless-stopped
+        volumes:
+            - ./zookeeper/conf:/pulsar/conf
+            - ./zookeeper/data:/pulsar/data
+            - ./zookeeper/logs:/pulsar/logs 
+            - ./zookeeper/log:/var/log
+
+networks:
+   pulsar-net:
+       name: pulsar-container-net
